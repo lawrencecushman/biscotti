@@ -1,0 +1,12 @@
+body {
+  padding: 20px;
+}
+
+.error {
+  color: #ce3418
+}
+
+.version {
+  font-size: 1em;
+  color: #868686
+}

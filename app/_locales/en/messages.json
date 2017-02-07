@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "biscotti",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "Allows you to copy all cookies for a given page to your clipboard as a csv.",
+    "description": "The description of the application"
+  }
+}
