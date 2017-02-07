@@ -2,6 +2,7 @@
 (function () {
 
 var errorClassName = 'error',
+    delimeter = '\t',
     messageElement = document.getElementById('message'),
     versionElement = document.getElementById('version'),
     useTitles = true,
@@ -37,7 +38,7 @@ function cleanCookies(cookies) {
             name: cookie.name,
             path: cookie.path,
             domain: cookie.domain,
-            expirationDate: cookie.expirationDate
+            expirationDate: cookie.expirationDate ? new Date(cookie.expirationDate).toUTCString() : null
         }
     });
 }
@@ -50,8 +51,8 @@ function getCsv(arr) {
     var titleKeys = Object.getOwnPropertyNames(titles);
     return arr.map(function(obj) {
         return titleKeys.map(function(key) {
-            return typeof obj[key] === 'string' && obj[key] ? obj[key].replace(',', '%2C') : obj[key];
-        }).join(',')
+            return obj[key];
+        }).join(delimeter)
     }).join('\n');
 }
 
