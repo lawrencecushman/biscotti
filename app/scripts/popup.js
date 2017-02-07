@@ -15,9 +15,6 @@ var errorClassName = 'error',
 
 function getAllCookies(done) {
     chrome.cookies.getAll({}, function (cookies) {
-        if (!cookies || !cookies.length) {
-            throw new Error('No cookies found.');
-        }
         done(cookies);
     });
 }
@@ -68,6 +65,11 @@ function copyToClipboard(text) {
 
 try {
     getAllCookies(function (cookies) {
+        if (!cookies || !cookies.length) {
+            displayMessage('No cookies found.', true);
+            return;
+        }
+
         var cleanedCookies = cleanCookies(cookies);
         var csv = getCsv(cleanedCookies);
         copyToClipboard(csv);
