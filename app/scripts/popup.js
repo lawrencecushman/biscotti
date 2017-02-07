@@ -50,7 +50,7 @@ function getCsv(arr) {
     var titleKeys = Object.getOwnPropertyNames(titles);
     return arr.map(function(obj) {
         return titleKeys.map(function(key) {
-            return obj[key];
+            return typeof obj[key] === 'string' && obj[key] ? obj[key].replace(',', '%2C') : obj[key];
         }).join(',')
     }).join('\n');
 }
