@@ -4,7 +4,7 @@
     "description": "The name of the application"
   },
   "appDescription": {
-    "message": "Cookie auditing tool developed by Microsoft. This tool will copy the name, domain, path, and expiration date of all browser cookies to the clipboard in CSV format. Note, this extension DOES NOT copy the values, nor ay PII from the cookies.",
+    "message": "Cookie auditing tool. This tool will copy the name, domain, path, and expiration date of all browser cookies to the clipboard in CSV format. Note, this extension DOES NOT copy the values, nor any PII from the cookies.",
     "description": "The description of the application"
   }
 }
