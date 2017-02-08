@@ -35,7 +35,7 @@ function cleanCookies(cookies) {
             name: cookie.name,
             path: cookie.path,
             domain: cookie.domain,
-            expirationDate: cookie.expirationDate ? new Date(cookie.expirationDate).toUTCString() : null
+            expirationDate: cookie.expirationDate ? new Date(cookie.expirationDate*1000).toUTCString() : null
         }
     });
 }
