@@ -1,11 +1,12 @@
-'use strict';
 (function () {
+'use strict';
+/* global chrome:true*/
 
 var errorClassName = 'error',
     delimeter = '\t',
     messageElement = document.getElementById('message'),
     versionElement = document.getElementById('version'),
-    useTitles = true,
+    useTitles = false,
     titles = {
         name: 'Name',
         path: 'Path',
@@ -36,7 +37,18 @@ function cleanCookies(cookies) {
             path: cookie.path,
             domain: cookie.domain,
             expirationDate: cookie.expirationDate ? new Date(cookie.expirationDate*1000).toUTCString() : null
+        };
+    }).sort(function(a, b) {
+        var domainA=a.domain.toLowerCase(), 
+            domainB = b.domain.toLowerCase();
+
+        if (domainA < domainB) {
+            return -1;
         }
+        if (domainA > domainB) {
+            return 1;
+        }
+        return 0;
     });
 }
 
@@ -49,8 +61,9 @@ function getCsv(arr) {
     return arr.map(function(obj) {
         return titleKeys.map(function(key) {
             return obj[key];
-        }).join(delimeter)
-    }).join('\n');
+        }).join(delimeter);
+    })
+    .join('\n');
 }
 
 function copyToClipboard(text) {
