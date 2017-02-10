@@ -13,12 +13,14 @@ var errorClassName = 'error',
         duration: 'Expiration Date'
     };
 
-function getAllCookies(done) {
-    chrome.cookies.getAll({}, function (cookies) {
-        done(cookies);
-    });
-}
-
+/**
+ * This method displays a message in the popup window. Can also display
+ * an error message by using the optional isError argument.
+ * 
+ * @param {string} message - the message to be displayed
+ * @param {boolean} isError - indicates the message should be displayed as an 
+ * error message
+ */
 function displayMessage(message, isError) {
     if (isError) {
         messageElement.classList.add(errorClassName);
@@ -29,6 +31,13 @@ function displayMessage(message, isError) {
     messageElement.textContent = message;
 }
 
+/**
+ * Cleans up the data, by extracting just the fields we need, and transforming the 
+ * data to make it more readable.
+ * 
+ * @param {Cookie[]} cookies - the cookies. See https://developer.chrome.com/extensions/cookies
+ * @returns the mapped, transformed and cleaned cookie data.
+ */
 function cleanCookies(cookies) {
     return cookies.map(function(cookie) {
         return {
@@ -50,6 +59,17 @@ function cleanCookies(cookies) {
     });
 }
 
+/**
+ * Calculates the number of years, or months, or days, or minutes until the provided 
+ * date, from riiiight...now. The value is rounded to the largest whole period. 
+ * 
+ * Eg. Input Epoch corresponding to 380 days from now would simply output "1 year", while 
+ * 270 days would output "270 days", since it isn't a whole year. A date 200 away 
+ * minutes would output "3 hours".
+ * 
+ * @param {Date} then - the future date.
+ * @returns - a string representing the duration until `then`
+ */
 function timeUntil(then) {
     var  now = new Date();
     var diff = then - now;
@@ -75,11 +95,25 @@ function timeUntil(then) {
     }
 }
 
+/**
+ * Formats and pluralizes the value and period provided.
+ * 
+ * @param {number} value - the numerical duration.
+ * @param {string} period - the kind of timespan. eg "day"
+ * @returns
+ */
 function getDurationMessage(value, period){
     var fixedValue = Math.round(value);
     return fixedValue + ' ' + period + (fixedValue > 1 ? 's' : '');
 }
 
+/**
+ * Returns the csv of the provided cookies. The cookies must have the form corresponding to
+ * `titles`
+ * 
+ * @param {CleanedCookie} arr - the array of cleaned cookies
+ * @returns a string of the cookies as CSV 
+ */
 function getCsv(arr) {
     if (useTitles){
         arr.unshift(titles);
@@ -94,6 +128,11 @@ function getCsv(arr) {
     .join('\n');
 }
 
+/**
+ * Copies the provided text to the clipboard.
+ * 
+ * @param {string} text - the text to be copied to the clipboaord.
+ */
 function copyToClipboard(text) {
     var copyElement = document.createElement('textarea');
     copyElement.textContent = text;
@@ -104,8 +143,9 @@ function copyToClipboard(text) {
 	document.body.removeChild(copyElement);
 }
 
+/// Main
 try {
-    getAllCookies(function (cookies) {
+    chrome.cookies.getAll({}, function (cookies) {
         if (!cookies || !cookies.length) {
             displayMessage('No cookies found.', true);
             return;
