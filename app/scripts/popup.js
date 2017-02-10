@@ -9,9 +9,8 @@ var errorClassName = 'error',
     useTitles = false,
     titles = {
         name: 'Name',
-        path: 'Path',
         domain: 'Domain',
-        expirationDate: 'Expiration Date'
+        duration: 'Expiration Date'
     };
 
 function getAllCookies(done) {
@@ -34,9 +33,8 @@ function cleanCookies(cookies) {
     return cookies.map(function(cookie) {
         return {
             name: cookie.name,
-            path: cookie.path,
             domain: cookie.domain,
-            expirationDate: cookie.expirationDate ? new Date(cookie.expirationDate*1000).toUTCString() : null
+            duration: cookie.expirationDate ? timeUntil(new Date(cookie.expirationDate*1000)) : null
         };
     }).sort(function(a, b) {
         var domainA=a.domain.toLowerCase(), 
@@ -50,6 +48,36 @@ function cleanCookies(cookies) {
         }
         return 0;
     });
+}
+
+function timeUntil(then) {
+    var  now = new Date();
+    var diff = then - now;
+
+    var oneMinute = 1000 * 60;
+    var   oneHour =   60 * oneMinute;
+    var    oneDay =   24 * oneHour;
+    var   oneYear =  364 * oneDay;
+
+    var   years =  diff / oneYear;
+    var    days = (diff % oneYear) / oneDay;
+    var   hours = (diff % oneDay)  / oneHour;
+    var minutes = (diff % oneHour) / oneMinute 
+
+    if (years >= 1){
+        return getDurationMessage(years, 'year');
+    } else if (days >= 1 ){
+        return getDurationMessage(days, 'day');
+    } else if (hours >= 1){
+        return getDurationMessage(hours, 'hour');
+    } else {
+        return getDurationMessage(minutes, 'minute');
+    }
+}
+
+function getDurationMessage(value, period){
+    var fixedValue = Math.round(value);
+    return fixedValue + ' ' + period + (fixedValue > 1 ? 's' : '');
 }
 
 function getCsv(arr) {
