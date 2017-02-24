@@ -67,7 +67,9 @@ function cleanCookies(cookies) {
     return resultCookies.filter(function(cookie) {
         let key = keyFn(cookie), 
             isNew = !resultSet.has(key);
-            if (isNew) resultSet.add(key);
+            if (isNew) {
+                resultSet.add(key);
+            }
         return isNew;
     });
 }
