@@ -1,8 +1,10 @@
+/* jshint esversion:6 */
+/* global chrome:true */
+
 (function () {
 'use strict';
-/* global chrome:true*/
 
-var errorClassName = 'error',
+let errorClassName = 'error',
     delimeter = '\t',
     messageElement = document.getElementById('message'),
     versionElement = document.getElementById('version'),
@@ -39,14 +41,14 @@ function displayMessage(message, isError) {
  * @returns the mapped, transformed and cleaned cookie data.
  */
 function cleanCookies(cookies) {
-    return cookies.map(function(cookie) {
+    let resultCookies = cookies.map(function(cookie) {
         return {
             name: cookie.name,
             domain: cookie.domain,
             duration: cookie.expirationDate ? timeUntil(new Date(cookie.expirationDate*1000)) : null
         };
     }).sort(function(a, b) {
-        var domainA=a.domain.toLowerCase(), 
+        let domainA = a.domain.toLowerCase(), 
             domainB = b.domain.toLowerCase();
 
         if (domainA < domainB) {
@@ -56,6 +58,17 @@ function cleanCookies(cookies) {
             return 1;
         }
         return 0;
+    });
+
+    // The cookies need to be deduped
+    let resultSet = new Set(),
+        keyFn = x => `${x.name}|${x.domain}`;
+
+    return resultCookies.filter(function(cookie) {
+        let key = keyFn(cookie), 
+            isNew = !resultSet.has(key);
+            if (isNew) resultSet.add(key);
+        return isNew;
     });
 }
 
@@ -71,18 +84,18 @@ function cleanCookies(cookies) {
  * @returns - a string representing the duration until `then`
  */
 function timeUntil(then) {
-    var  now = new Date();
-    var diff = then - now;
+    let  now = new Date();
+    let diff = then - now;
 
-    var oneMinute = 1000 * 60;
-    var   oneHour =   60 * oneMinute;
-    var    oneDay =   24 * oneHour;
-    var   oneYear =  364 * oneDay;
+    let oneMinute = 1000 * 60;
+    let   oneHour =   60 * oneMinute;
+    let    oneDay =   24 * oneHour;
+    let   oneYear =  364 * oneDay;
 
-    var   years =  diff / oneYear;
-    var    days = (diff % oneYear) / oneDay;
-    var   hours = (diff % oneDay)  / oneHour;
-    var minutes = (diff % oneHour) / oneMinute 
+    let   years =  diff / oneYear;
+    let    days = (diff % oneYear) / oneDay;
+    let   hours = (diff % oneDay)  / oneHour;
+    let minutes = (diff % oneHour) / oneMinute 
 
     if (years >= 1){
         return getDurationMessage(years, 'year');
@@ -103,7 +116,7 @@ function timeUntil(then) {
  * @returns
  */
 function getDurationMessage(value, period){
-    var fixedValue = Math.round(value);
+    let fixedValue = Math.round(value);
     return fixedValue + ' ' + period + (fixedValue > 1 ? 's' : '');
 }
 
@@ -119,7 +132,7 @@ function getCsv(arr) {
         arr.unshift(titles);
     }
     
-    var titleKeys = Object.getOwnPropertyNames(titles);
+    let titleKeys = Object.getOwnPropertyNames(titles);
     return arr.map(function(obj) {
         return titleKeys.map(function(key) {
             return obj[key];
@@ -134,7 +147,7 @@ function getCsv(arr) {
  * @param {string} text - the text to be copied to the clipboaord.
  */
 function copyToClipboard(text) {
-    var copyElement = document.createElement('textarea');
+    let copyElement = document.createElement('textarea');
     copyElement.textContent = text;
     document.body.appendChild(copyElement, document.body.firstChild);
     copyElement.focus();
@@ -151,10 +164,10 @@ try {
             return;
         }
 
-        var cleanedCookies = cleanCookies(cookies);
-        var csv = getCsv(cleanedCookies);
+        let cleanedCookies = cleanCookies(cookies);
+        let csv = getCsv(cleanedCookies);
         copyToClipboard(csv);
-        var message = cookies.length + ' cookies copied to clipboard.';
+        let message = cleanedCookies.length + ' cookies copied to clipboard.';
         displayMessage(message);
     });
 } catch (e) {
